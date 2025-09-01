@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Menu, Skull, UserPlus } from "lucide-react";
+import { Menu, Skull, User, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,7 +61,7 @@ export function ImposterApp() {
     if (mainUsername === "Generating...") return true;
     const filledUsernames = allUsernames.filter(name => name.trim() !== '');
     if (filledUsernames.length === 0) return true;
-    const uniqueUsernames = new Set(filledUsernames);
+    const uniqueUsernames = new Set(filledUsernames.map(name => name.trim().toLowerCase()));
     return filledUsernames.length !== uniqueUsernames.size;
   }, [allUsernames, mainUsername]);
 
@@ -75,6 +75,8 @@ export function ImposterApp() {
     setImposter(selectedImposter);
     setIsRevealed(true);
   };
+
+  const isLocalUserImposter = imposter === mainUsername;
 
   return (
     <>
@@ -93,13 +95,15 @@ export function ImposterApp() {
             <SheetContent>
               <SheetHeader>
                 <SheetTitle className="text-primary">Rules of Engagement</SheetTitle>
-                <SheetDescription className="space-y-4 pt-4 text-left text-base">
-                  <div>1. Gather your squad of 4.</div>
+                <SheetDescription>
+                  <div className="space-y-4 pt-4 text-left text-base">
+                  <div>1. Gather your squad of up to 4.</div>
                   <div>2. Enter all unique codenames.</div>
                   <div>3. Press 'FIND THE IMPOSTER'.</div>
-                  <div>4. The traitor's identity will be revealed on screen. Good luck, and fight for Democracy!</div>
+                  <div>4. The traitor's identity will be revealed. Good luck, and fight for Democracy!</div>
                   <div>5. If no one exfils or just the imposter does, then the imposter wins.</div>
                   <div>6. If the imposter doesnt exfil, then everyone else wins.</div>
+                  </div>
                 </SheetDescription>
               </SheetHeader>
             </SheetContent>
@@ -159,19 +163,31 @@ export function ImposterApp() {
 
       <AlertDialog open={isRevealed} onOpenChange={setIsRevealed}>
         <AlertDialogContent className="border-accent">
-          <AlertDialogHeader className="items-center">
-            <Skull className="h-16 w-16 text-accent" />
-            <AlertDialogTitle className="pt-4 text-center text-3xl font-bold uppercase tracking-wider text-primary">
-              Traitor Detected!
-            </AlertDialogTitle>
-            <AlertDialogDescription className="pt-4 text-center text-lg">
-              The imposter among you is...
-              <br />
-              <span className="mt-2 block text-2xl font-bold text-accent">
-                {imposter}
-              </span>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+          {isLocalUserImposter ? (
+             <AlertDialogHeader className="items-center">
+                <User className="h-16 w-16 text-primary" />
+                <AlertDialogTitle className="pt-4 text-center text-3xl font-bold uppercase tracking-wider text-primary">
+                  You are the Imposter
+                </AlertDialogTitle>
+                <AlertDialogDescription className="pt-4 text-center text-lg">
+                  Sabotage the mission. Destroy their way of life. Do not get caught.
+                </AlertDialogDescription>
+             </AlertDialogHeader>
+          ) : (
+            <AlertDialogHeader className="items-center">
+              <Skull className="h-16 w-16 text-accent" />
+              <AlertDialogTitle className="pt-4 text-center text-3xl font-bold uppercase tracking-wider text-primary">
+                Traitor Detected!
+              </AlertDialogTitle>
+              <AlertDialogDescription className="pt-4 text-center text-lg">
+                The imposter among you is...
+                <br />
+                <span className="mt-2 block text-2xl font-bold text-accent">
+                  {imposter}
+                </span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+          )}
           <AlertDialogFooter>
             <AlertDialogAction className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setIsRevealed(false)}>
               For Super Earth!
