@@ -190,7 +190,7 @@ export function ImposterApp() {
           )}
           <AlertDialogFooter>
             <AlertDialogAction className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setIsRevealed(false)}>
-              For Super Earth!
+              {isLocalUserImposter ? 'Down With Humanity' : 'For Super Earth!'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
