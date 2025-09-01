@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { RefreshCw, Menu, Skull, UserPlus } from "lucide-react";
+import { Menu, Skull, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,10 +48,6 @@ export function ImposterApp() {
   useEffect(() => {
     setMainUsername(generateUsername());
   }, []);
-
-  const handleRefreshUsername = () => {
-    setMainUsername(generateUsername());
-  };
 
   const handleSquadChange = (index: number, value: string) => {
     const newSquad = [...squadUsernames];
@@ -116,9 +112,6 @@ export function ImposterApp() {
                   <div id="main-username" className="flex h-12 w-full items-center rounded-md border border-input bg-background px-3 text-lg font-semibold">
                     {mainUsername}
                   </div>
-                  <Button variant="outline" size="icon" onClick={handleRefreshUsername} aria-label="Generate new codename">
-                    <RefreshCw className="h-5 w-5" />
-                  </Button>
                 </div>
               </div>
 
