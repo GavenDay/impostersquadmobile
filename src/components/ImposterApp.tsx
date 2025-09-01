@@ -97,10 +97,10 @@ export function ImposterApp() {
               <SheetHeader>
                 <SheetTitle className="text-primary">Rules of Engagement</SheetTitle>
                 <SheetDescription className="space-y-4 pt-4 text-left text-base">
-                  <p>1. Gather your squad of 4.</p>
-                  <p>2. Enter all unique codenames.</p>
-                  <p>3. Press 'FIND THE IMPOSTER'.</p>
-                  <p>4. The traitor's identity will be revealed on screen. Good luck, and fight for Democracy!</p>
+                  <div>1. Gather your squad of 4.</div>
+                  <div>2. Enter all unique codenames.</div>
+                  <div>3. Press 'FIND THE IMPOSTER'.</div>
+                  <div>4. The traitor's identity will be revealed on screen. Good luck, and fight for Democracy!</div>
                 </SheetDescription>
               </SheetHeader>
             </SheetContent>
