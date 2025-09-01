@@ -3,7 +3,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "Helldivers Imposter",
+  title: "Imposter Squad",
   description: "Find the imposter among your squad!",
 };
 

@@ -83,8 +83,11 @@ export function ImposterApp() {
     <>
       <div className="container mx-auto flex max-w-4xl flex-col p-4 sm:p-6 md:p-8">
         <header className="mb-6 flex items-center justify-between">
-          <h1 className="font-headline text-2xl font-bold tracking-tighter sm:text-3xl">
-            HELLDIVERS <span className="text-primary">IMPOSTER</span>
+        <h1 className="flex items-center gap-3 font-headline text-2xl font-bold tracking-tighter sm:text-3xl">
+            <Skull className="h-8 w-8 text-primary" />
+            <span>
+              IMPOSTER <span className="text-primary">SQUAD</span>
+            </span>
           </h1>
           <Sheet>
             <SheetTrigger asChild>
