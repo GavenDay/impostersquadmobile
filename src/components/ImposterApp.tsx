@@ -199,14 +199,10 @@ export function ImposterApp() {
             <AlertDialogHeader className="items-center">
               <Skull className="h-16 w-16 text-accent" />
               <AlertDialogTitle className="pt-4 text-center text-3xl font-bold uppercase tracking-wider text-primary">
-                Traitor Detected!
+                Warning!
               </AlertDialogTitle>
               <AlertDialogDescription className="pt-4 text-center text-lg">
-                The imposter among you is...
-                <br />
-                <span className="mt-2 block text-2xl font-bold text-accent">
-                  {imposter}
-                </span>
+                There is an imposter amongst your ranks. Eliminate them at all costs.
               </AlertDialogDescription>
             </AlertDialogHeader>
           )}
