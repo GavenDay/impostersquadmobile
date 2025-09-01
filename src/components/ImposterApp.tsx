@@ -60,8 +60,9 @@ export function ImposterApp() {
   const isButtonDisabled = useMemo(() => {
     if (mainUsername === "Generating...") return true;
     const filledUsernames = allUsernames.filter(name => name.trim() !== '');
+    if (filledUsernames.length === 0) return true;
     const uniqueUsernames = new Set(filledUsernames);
-    return uniqueUsernames.size !== 4;
+    return filledUsernames.length !== uniqueUsernames.size;
   }, [allUsernames, mainUsername]);
 
   const handleFindImposter = () => {
