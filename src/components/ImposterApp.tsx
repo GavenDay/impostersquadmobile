@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Menu, Skull, User, UserPlus } from "lucide-react";
+import { Mail, Menu, Skull, User, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -44,6 +44,7 @@ export function ImposterApp() {
   const [squadUsernames, setSquadUsernames] = useState<string[]>(['', '', '']);
   const [imposter, setImposter] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [isContactUsOpen, setIsContactUsOpen] = useState(false);
 
   useEffect(() => {
     setMainUsername(generateUsername());
@@ -89,24 +90,32 @@ export function ImposterApp() {
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
-                <span className="sr-only">Open Rules</span>
+                <span className="sr-only">Open Menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent>
               <SheetHeader>
                 <SheetTitle className="text-primary">Rules of Engagement</SheetTitle>
                 <SheetDescription asChild>
-                  <div className="space-y-4 pt-4 text-left text-base text-muted-foreground">
-                  <div>1. Gather your squad of up to 4.</div>
-                  <div>2. Enter all unique codenames.</div>
-                  <div>3. Press 'FIND THE IMPOSTER'.</div>
-                  <div>4. The traitor's identity will be revealed. Good luck, and fight for Democracy!</div>
-                  <div>5. If no one exfils or just the imposter does, then the imposter wins.</div>
-                  <div>6. If the imposter doesnt exfil, then everyone else wins.</div>
-                  <Separator className="my-4" />
-                  <div className="text-sm text-muted-foreground">
-                    The creation of your own rules of engagement is not only sanctioned but encouraged. While on the field of battle rules change. Make sure to share these rules with the rest of the community. It might save someone while in the field.
-                  </div>
+                  <div className="flex h-full flex-col">
+                    <div className="space-y-4 pt-4 text-left text-base text-muted-foreground">
+                      <div>1. Gather your squad of up to 4.</div>
+                      <div>2. Enter all unique codenames.</div>
+                      <div>3. Press 'FIND THE IMPOSTER'.</div>
+                      <div>4. The traitor's identity will be revealed. Good luck, and fight for Democracy!</div>
+                      <div>5. If no one exfils or just the imposter does, then the imposter wins.</div>
+                      <div>6. If the imposter doesnt exfil, then everyone else wins.</div>
+                    </div>
+                    <Separator className="my-4" />
+                    <div className="text-sm text-muted-foreground">
+                      The creation of your own rules of engagement is not only sanctioned but encouraged. While on the field of battle rules change. Make sure to share these rules with the rest of the community. It might save someone while in the field.
+                    </div>
+                    <div className="mt-auto pt-6">
+                      <Button variant="outline" className="w-full" onClick={() => setIsContactUsOpen(true)}>
+                        <Mail className="mr-2 h-4 w-4" />
+                        Contact Us
+                      </Button>
+                    </div>
                   </div>
                 </SheetDescription>
               </SheetHeader>
@@ -195,6 +204,22 @@ export function ImposterApp() {
           <AlertDialogFooter>
             <AlertDialogAction className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setIsRevealed(false)}>
               {isLocalUserImposter ? 'Down With Humanity' : 'For Super Earth!'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      <AlertDialog open={isContactUsOpen} onOpenChange={setIsContactUsOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-primary">A Message from High Command</AlertDialogTitle>
+            <AlertDialogDescription className="pt-4 text-base">
+              This app was built by one guy in a couple of hours so he could play with some friends. If anything doesn't work, you're kind of SOL (Soldier Out of Luck).
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setIsContactUsOpen(false)}>
+              Understood
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
