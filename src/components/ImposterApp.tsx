@@ -176,6 +176,12 @@ export function ImposterApp() {
           </CardContent>
         </Card>
       </div>
+      
+      <div className="fixed bottom-0 left-0 w-full flex justify-center items-center p-4">
+        <div className="w-[728px] h-[90px] bg-muted flex items-center justify-center text-muted-foreground">
+          Google Ad Banner (728x90)
+        </div>
+      </div>
 
       <AlertDialog open={isRevealed} onOpenChange={setIsRevealed}>
         <AlertDialogContent className="border-accent">
