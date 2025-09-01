@@ -97,6 +97,7 @@ export function ImposterApp() {
                   <div>2. Enter all unique codenames.</div>
                   <div>3. Press 'FIND THE IMPOSTER'.</div>
                   <div>4. The traitor's identity will be revealed on screen. Good luck, and fight for Democracy!</div>
+                  <div>5. If no one exfils or just the imposter does, then the imposter wins.</div>
                 </SheetDescription>
               </SheetHeader>
             </SheetContent>
