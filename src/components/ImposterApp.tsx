@@ -95,8 +95,8 @@ export function ImposterApp() {
             <SheetContent>
               <SheetHeader>
                 <SheetTitle className="text-primary">Rules of Engagement</SheetTitle>
-                <SheetDescription>
-                  <div className="space-y-4 pt-4 text-left text-base">
+                <SheetDescription asChild>
+                  <div className="space-y-4 pt-4 text-left text-base text-muted-foreground">
                   <div>1. Gather your squad of up to 4.</div>
                   <div>2. Enter all unique codenames.</div>
                   <div>3. Press 'FIND THE IMPOSTER'.</div>
