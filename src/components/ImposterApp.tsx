@@ -103,6 +103,10 @@ export function ImposterApp() {
                   <div>4. The traitor's identity will be revealed. Good luck, and fight for Democracy!</div>
                   <div>5. If no one exfils or just the imposter does, then the imposter wins.</div>
                   <div>6. If the imposter doesnt exfil, then everyone else wins.</div>
+                  <Separator className="my-4" />
+                  <div className="text-sm text-muted-foreground">
+                    The creation of your own rules of engagement is not only sanctioned but encouraged. While on the field of battle rules change. Make sure to share these rules with the rest of the community. It might save someone while in the field.
+                  </div>
                   </div>
                 </SheetDescription>
               </SheetHeader>
