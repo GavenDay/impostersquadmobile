@@ -26,7 +26,9 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { AdBanner } from "./AdBanner";
 import { db } from "@/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, onSnapshot, updateDoc, arrayUnion } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
+
 
 const adjectives = [
   'Crimson', 'Azure', 'Golden', 'Shadow', 'Steel', 'Void', 'Iron', 'Star', 'Death', 'Omega', 'Nova', 'Cyber', 'Bio', 'Mech', 'Liberty', 'Freedom'
@@ -47,6 +49,7 @@ export function ImposterAppComponent() {
   const [gameScreen, setGameScreen] = useState<GameScreen>("lobby");
   const [squadId, setSquadId] = useState("");
   const [squadIdInput, setSquadIdInput] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const generateUsername = () => {
@@ -57,6 +60,33 @@ export function ImposterAppComponent() {
     };
     setMainUsername(generateUsername());
   }, []);
+
+  // Firestore real-time listener
+  useEffect(() => {
+    if (!squadId) return;
+
+    const squadRef = doc(db, "squads", squadId);
+    const unsubscribe = onSnapshot(squadRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setSquadUsernames(data.players || []);
+        if (data.imposter) {
+          setImposter(data.imposter);
+          setIsRevealed(true);
+        }
+      } else {
+        toast({
+            variant: "destructive",
+            title: "Error joining squad",
+            description: "Squad ID not found. Please check the ID and try again.",
+        });
+        handleResetToLobby();
+      }
+    });
+
+    // Cleanup subscription on component unmount
+    return () => unsubscribe();
+  }, [squadId, toast]);
 
   const handleCreateSquad = async () => {
     if (mainUsername.trim() === "") {
@@ -74,24 +104,43 @@ export function ImposterAppComponent() {
         });
 
         setSquadId(newSquadId);
-        setSquadUsernames([mainUsername]);
         setGameScreen("squad");
     } catch (error) {
         console.error("Error creating squad: ", error);
-        // You could show a toast message to the user here
+        toast({
+            variant: "destructive",
+            title: "Error creating squad",
+            description: "Could not create a new squad. Please try again.",
+        });
     }
   };
 
-  const handleJoinSquad = () => {
-    if (mainUsername.trim() === "" || squadIdInput.trim() === "") {
-        // Maybe show a toast or error message
+  const handleJoinSquad = async () => {
+    const squadIdToJoin = squadIdInput.trim().toUpperCase();
+    if (mainUsername.trim() === "" || squadIdToJoin === "") {
+        toast({
+            variant: "destructive",
+            title: "Missing Information",
+            description: "Please enter your codename and a Squad ID.",
+        });
         return;
     }
-     // In a future step, this will call Firebase
-    setSquadId(squadIdInput.toUpperCase());
-    setGameScreen("squad");
-    // This is a placeholder, will be replaced with real-time data
-    setSquadUsernames([mainUsername, "Teammate1", "Teammate2"]);
+    
+    try {
+        const squadRef = doc(db, "squads", squadIdToJoin);
+        await updateDoc(squadRef, {
+            players: arrayUnion(mainUsername)
+        });
+        setSquadId(squadIdToJoin);
+        setGameScreen("squad");
+    } catch (error) {
+        console.error("Error joining squad: ", error);
+        toast({
+            variant: "destructive",
+            title: "Error joining squad",
+            description: "Squad ID not found or network error. Please check the ID and try again.",
+        });
+    }
   }
   
   const handleResetToLobby = () => {
@@ -103,16 +152,26 @@ export function ImposterAppComponent() {
     setIsRevealed(false);
   };
 
-  const handleFindImposter = () => {
-    const allUsernames = [mainUsername, ...squadUsernames.filter(Boolean)];
-    const uniqueUsernames = Array.from(new Set(allUsernames));
-    if (uniqueUsernames.length < 2) return;
+  const handleFindImposter = async () => {
+    if (squadUsernames.length < 2) return;
 
-    const randomIndex = Math.floor(Math.random() * uniqueUsernames.length);
-    const selectedImposter = uniqueUsernames[randomIndex];
+    const randomIndex = Math.floor(Math.random() * squadUsernames.length);
+    const selectedImposter = squadUsernames[randomIndex];
     
-    setImposter(selectedImposter);
-    setIsRevealed(true);
+    try {
+      const squadRef = doc(db, "squads", squadId);
+      await updateDoc(squadRef, {
+        imposter: selectedImposter,
+        gamePhase: 'reveal',
+      });
+    } catch (error) {
+        console.error("Error setting imposter: ", error);
+        toast({
+            variant: "destructive",
+            title: "Network Error",
+            description: "Could not start the game. Please try again.",
+        });
+    }
   };
 
   const isLocalUserImposter = imposter === mainUsername;
@@ -166,7 +225,7 @@ export function ImposterAppComponent() {
                     type="text"
                     placeholder="Enter Squad ID..."
                     value={squadIdInput}
-                    onChange={(e) => setSquadIdInput(e.target.value)}
+                    onChange={(e) => setSquadIdInput(e.target.value.toUpperCase())}
                     className="h-12 text-base"
                 />
                 <Button onClick={handleJoinSquad} disabled={!mainUsername || !squadIdInput} className="h-12">
@@ -202,6 +261,11 @@ export function ImposterAppComponent() {
               {squadUsernames.map((username, index) => (
                 <div key={index} className="flex h-12 w-full items-center rounded-md border border-input bg-background px-3 text-lg font-semibold">
                     {username} {username === mainUsername && "(You)"}
+                </div>
+              ))}
+              {Array.from({ length: 4 - squadUsernames.length }).map((_, index) => (
+                <div key={`placeholder-${index}`} className="flex h-12 w-full items-center rounded-md border border-dashed border-input/50 bg-background/50 px-3 text-lg font-semibold text-muted-foreground/50">
+                    Awaiting Drop...
                 </div>
               ))}
             </div>
