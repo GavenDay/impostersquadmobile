@@ -58,12 +58,12 @@ export function ImposterAppComponent() {
       return;
     }
     const filledUsernames = allUsernames.filter(name => name.trim() !== '');
-    if (filledUsernames.length === 0) {
+    if (filledUsernames.length < 2) {
       setIsButtonDisabled(true);
       return;
     }
     const uniqueUsernames = new Set(filledUsernames.map(name => name.trim().toLowerCase()));
-    setIsButtonDisabled(filledUsernames.length !== uniqueUsernames.size);
+    setIsButtonDisabled(filledUsernames.length !== uniqueUsernames.size || filledUsernames.length < 2);
   }, [mainUsername, squadUsernames]);
 
   const handleSquadChange = (index: number, value: string) => {
@@ -207,7 +207,7 @@ export function ImposterAppComponent() {
                 Warning!
               </AlertDialogTitle>
               <AlertDialogDescription className="pt-4 text-center text-lg">
-                There is an imposter amongst your ranks. Eliminate them at all costs.
+                There is an imposter amongst your ranks. Eliminate them at all costs. The imposter is: {imposter}
               </AlertDialogDescription>
             </AlertDialogHeader>
           )}
