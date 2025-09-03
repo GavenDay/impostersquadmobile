@@ -11,7 +11,7 @@ declare global {
 }
 
 export function AdBanner() {
-  const adClient = "ca-pub-XXXXXXXXXXXXXXXX"; // <-- REPLACE WITH YOUR CLIENT ID
+  const adClient = "ca-pub-5973346929930120"; // <-- REPLACE WITH YOUR CLIENT ID
   const adSlot = "YYYYYYYYYY"; // <-- REPLACE WITH YOUR AD SLOT ID
 
   useEffect(() => {
