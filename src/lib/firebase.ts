@@ -1,5 +1,6 @@
 // src/lib/firebase.ts
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   "projectId": "imposter-squad-husmo",
@@ -12,5 +13,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-export { app };
+export { app, db };

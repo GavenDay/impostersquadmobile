@@ -25,6 +25,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { AdBanner } from "./AdBanner";
+import { db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 const adjectives = [
   'Crimson', 'Azure', 'Golden', 'Shadow', 'Steel', 'Void', 'Iron', 'Star', 'Death', 'Omega', 'Nova', 'Cyber', 'Bio', 'Mech', 'Liberty', 'Freedom'
@@ -56,16 +58,28 @@ export function ImposterAppComponent() {
     setMainUsername(generateUsername());
   }, []);
 
-  const handleCreateSquad = () => {
+  const handleCreateSquad = async () => {
     if (mainUsername.trim() === "") {
-        // Maybe show a toast or error message
         return;
     }
-    // In a future step, this will call Firebase
     const newSquadId = "S" + Math.random().toString(36).substring(2, 8).toUpperCase();
-    setSquadId(newSquadId);
-    setSquadUsernames([mainUsername]);
-    setGameScreen("squad");
+    
+    try {
+        const squadRef = doc(db, "squads", newSquadId);
+        await setDoc(squadRef, {
+            players: [mainUsername],
+            imposter: null,
+            gamePhase: 'lobby',
+            createdAt: new Date(),
+        });
+
+        setSquadId(newSquadId);
+        setSquadUsernames([mainUsername]);
+        setGameScreen("squad");
+    } catch (error) {
+        console.error("Error creating squad: ", error);
+        // You could show a toast message to the user here
+    }
   };
 
   const handleJoinSquad = () => {
