@@ -33,6 +33,8 @@ const nouns = [
   'Reaper', 'Patriot', 'Warden', 'Eagle', 'Serpent', 'Skull', 'Blade', 'Viper', 'Ghost', 'Diver', 'Destroyer', 'Avenger', 'Punisher', 'Titan', 'Spike'
 ];
 
+const squadLabels = ["Alpha", "Bravo", "Charlie"];
+
 export function ImposterAppComponent() {
   const [mainUsername, setMainUsername] = useState("Generating...");
   const [squadUsernames, setSquadUsernames] = useState<string[]>(['', '', '']);
@@ -153,7 +155,7 @@ export function ImposterAppComponent() {
                 <div className="grid grid-cols-1 gap-4">
                   {squadUsernames.map((username, index) => (
                     <div key={index} className="space-y-2">
-                       <Label htmlFor={`squad-mate-${index + 1}`}>Squad Mate {index + 1}</Label>
+                       <Label htmlFor={`squad-mate-${index + 1}`}>{squadLabels[index]} Squad Mate</Label>
                       <Input
                         id={`squad-mate-${index + 1}`}
                         type="text"
