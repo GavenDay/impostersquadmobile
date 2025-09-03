@@ -41,7 +41,6 @@ export function ImposterAppComponent() {
   const [imposter, setImposter] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isContactUsOpen, setIsContactUsOpen] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   
   const [gameScreen, setGameScreen] = useState<GameScreen>("lobby");
   const [squadId, setSquadId] = useState("");
@@ -80,6 +79,15 @@ export function ImposterAppComponent() {
     // This is a placeholder, will be replaced with real-time data
     setSquadUsernames([mainUsername, "Teammate1", "Teammate2"]);
   }
+  
+  const handleResetToLobby = () => {
+    setGameScreen("lobby");
+    setSquadId("");
+    setSquadIdInput("");
+    setSquadUsernames([]);
+    setImposter(null);
+    setIsRevealed(false);
+  };
 
   const handleFindImposter = () => {
     const allUsernames = [mainUsername, ...squadUsernames.filter(Boolean)];
@@ -204,12 +212,14 @@ export function ImposterAppComponent() {
     <>
       <div className="container mx-auto flex max-w-4xl flex-col p-4 sm:p-6 md:p-8">
         <header className="mb-6 flex items-center justify-between">
-        <h1 className="flex items-center gap-3 font-headline text-2xl font-bold tracking-tighter sm:text-3xl">
-            <Skull className="h-8 w-8 text-primary" />
-            <span>
-              IMPOSTER <span className="text-primary">SQUAD</span>
-            </span>
-          </h1>
+          <button onClick={handleResetToLobby} className="flex items-center gap-3 text-left focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-md p-1 -m-1">
+            <h1 className="flex items-center gap-3 font-headline text-2xl font-bold tracking-tighter sm:text-3xl">
+              <Skull className="h-8 w-8 text-primary" />
+              <span>
+                IMPOSTER <span className="text-primary">SQUAD</span>
+              </span>
+            </h1>
+          </button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
