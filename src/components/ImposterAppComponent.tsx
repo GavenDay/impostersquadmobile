@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mail, Menu, Skull, User, UserPlus } from "lucide-react";
+import { Mail, Menu, Skull, User, UserPlus, Copy, Users, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,15 +33,19 @@ const nouns = [
   'Reaper', 'Patriot', 'Warden', 'Eagle', 'Serpent', 'Skull', 'Blade', 'Viper', 'Ghost', 'Diver', 'Destroyer', 'Avenger', 'Punisher', 'Titan', 'Spike'
 ];
 
-const squadLabels = ["Alpha", "Bravo", "Charlie"];
+type GameScreen = "lobby" | "squad";
 
 export function ImposterAppComponent() {
-  const [mainUsername, setMainUsername] = useState("Generating...");
-  const [squadUsernames, setSquadUsernames] = useState<string[]>(['', '', '']);
+  const [mainUsername, setMainUsername] = useState("");
+  const [squadUsernames, setSquadUsernames] = useState<string[]>([]);
   const [imposter, setImposter] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isContactUsOpen, setIsContactUsOpen] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  
+  const [gameScreen, setGameScreen] = useState<GameScreen>("lobby");
+  const [squadId, setSquadId] = useState("");
+  const [squadIdInput, setSquadIdInput] = useState("");
 
   useEffect(() => {
     const generateUsername = () => {
@@ -53,32 +57,35 @@ export function ImposterAppComponent() {
     setMainUsername(generateUsername());
   }, []);
 
-  useEffect(() => {
-    const allUsernames = [mainUsername, ...squadUsernames];
-    if (mainUsername === "Generating...") {
-      setIsButtonDisabled(true);
-      return;
+  const handleCreateSquad = () => {
+    if (mainUsername.trim() === "") {
+        // Maybe show a toast or error message
+        return;
     }
-    const filledUsernames = allUsernames.filter(name => name.trim() !== '');
-    if (filledUsernames.length < 2) {
-      setIsButtonDisabled(true);
-      return;
-    }
-    const uniqueUsernames = new Set(filledUsernames.map(name => name.trim().toLowerCase()));
-    setIsButtonDisabled(filledUsernames.length !== uniqueUsernames.size || filledUsernames.length < 2);
-  }, [mainUsername, squadUsernames]);
-
-  const handleSquadChange = (index: number, value: string) => {
-    const newSquad = [...squadUsernames];
-    newSquad[index] = value;
-    setSquadUsernames(newSquad);
+    // In a future step, this will call Firebase
+    const newSquadId = "S" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    setSquadId(newSquadId);
+    setSquadUsernames([mainUsername]);
+    setGameScreen("squad");
   };
 
+  const handleJoinSquad = () => {
+    if (mainUsername.trim() === "" || squadIdInput.trim() === "") {
+        // Maybe show a toast or error message
+        return;
+    }
+     // In a future step, this will call Firebase
+    setSquadId(squadIdInput.toUpperCase());
+    setGameScreen("squad");
+    // This is a placeholder, will be replaced with real-time data
+    setSquadUsernames([mainUsername, "Teammate1", "Teammate2"]);
+  }
+
   const handleFindImposter = () => {
-    if (isButtonDisabled) return;
-    
-    const allUsernames = [mainUsername, ...squadUsernames];
-    const uniqueUsernames = Array.from(new Set(allUsernames.filter(name => name.trim() !== '')));
+    const allUsernames = [mainUsername, ...squadUsernames.filter(Boolean)];
+    const uniqueUsernames = Array.from(new Set(allUsernames));
+    if (uniqueUsernames.length < 2) return;
+
     const randomIndex = Math.floor(Math.random() * uniqueUsernames.length);
     const selectedImposter = uniqueUsernames[randomIndex];
     
@@ -87,6 +94,111 @@ export function ImposterAppComponent() {
   };
 
   const isLocalUserImposter = imposter === mainUsername;
+
+  const renderLobbyScreen = () => (
+    <Card className="w-full border-2 border-primary/20 bg-card/80 shadow-xl shadow-primary/5">
+        <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl text-primary">
+                <UserPlus className="h-6 w-6" />
+                Prepare for Deployment
+            </CardTitle>
+        </CardHeader>
+      <CardContent className="p-6 pt-0 space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="main-username" className="text-lg font-medium">Your Generated Codename</Label>
+          <div className="flex items-center gap-2">
+            <Input 
+                id="main-username"
+                className="h-12 text-lg font-semibold bg-background"
+                value={mainUsername}
+                onChange={(e) => setMainUsername(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-4">
+             <h3 className="flex items-center gap-2 text-lg font-medium">
+                <Users className="h-5 w-5" />
+                Create a New Squad
+            </h3>
+            <Button onClick={handleCreateSquad} disabled={!mainUsername} className="w-full h-12 text-lg">
+                Create Squad
+            </Button>
+        </div>
+
+        <div className="flex items-center gap-4">
+            <Separator className="flex-1" />
+            <span className="text-muted-foreground">OR</span>
+            <Separator className="flex-1" />
+        </div>
+
+        <div className="space-y-4">
+            <h3 className="flex items-center gap-2 text-lg font-medium">
+                <LogIn className="h-5 w-5" />
+                Join an Existing Squad
+            </h3>
+            <div className="flex gap-2">
+                <Input
+                    type="text"
+                    placeholder="Enter Squad ID..."
+                    value={squadIdInput}
+                    onChange={(e) => setSquadIdInput(e.target.value)}
+                    className="h-12 text-base"
+                />
+                <Button onClick={handleJoinSquad} disabled={!mainUsername || !squadIdInput} className="h-12">
+                    Join
+                </Button>
+            </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderSquadScreen = () => (
+    <Card className="w-full border-2 border-primary/20 bg-card/80 shadow-xl shadow-primary/5">
+        <CardHeader>
+             <CardTitle className="flex items-center justify-between text-xl text-primary">
+                <span>Squad Ready</span>
+                <div className="flex items-center gap-2">
+                    <span className="text-base font-mono p-2 rounded-md bg-muted text-muted-foreground">{squadId}</span>
+                    <Button variant="ghost" size="icon" onClick={() => navigator.clipboard.writeText(squadId)}>
+                        <Copy className="h-5 w-5"/>
+                    </Button>
+                </div>
+            </CardTitle>
+        </CardHeader>
+      <CardContent className="p-6 pt-0">
+        <div className="space-y-8">
+            <div className="space-y-4">
+            <h3 className="flex items-center gap-2 text-lg font-medium text-primary">
+                <Users className="h-5 w-5" />
+                Your Squad ({squadUsernames.length}/4)
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {squadUsernames.map((username, index) => (
+                <div key={index} className="flex h-12 w-full items-center rounded-md border border-input bg-background px-3 text-lg font-semibold">
+                    {username} {username === mainUsername && "(You)"}
+                </div>
+              ))}
+            </div>
+          </div>
+          <Separator className="my-6 bg-border" />
+          <div className="flex justify-center">
+            <Button 
+              onClick={handleFindImposter} 
+              disabled={squadUsernames.length < 2}
+              size="lg"
+              className="w-full max-w-md py-8 text-xl font-bold uppercase tracking-widest transition-all duration-300 ease-in-out hover:scale-105 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:hover:scale-100"
+            >
+              Find the Imposter
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <>
@@ -111,10 +223,10 @@ export function ImposterAppComponent() {
                 <SheetDescription asChild>
                   <div className="flex h-full flex-col">
                     <div className="space-y-4 pt-4 text-left text-base text-muted-foreground">
-                      <div>1. Gather your squad of up to 4.</div>
-                      <div>2. Enter all unique codenames.</div>
-                      <div>3. Press 'FIND THE IMPOSTER'.</div>
-                      <div>4. The traitor's identity will be revealed. Good luck, and fight for Democracy!</div>
+                      <div>1. One player creates a squad and shares the Squad ID.</div>
+                      <div>2. Other players join using the Squad ID.</div>
+                      <div>3. Once all players are in, the creator presses 'FIND THE IMPOSTER'.</div>
+                      <div>4. Each player's screen will reveal their role. Good luck, and fight for Democracy!</div>
                       <div>5. If no one exfils or just the imposter does, then the imposter wins.</div>
                       <div>6. If the imposter doesnt exfil, then everyone else wins.</div>
                     </div>
@@ -135,55 +247,8 @@ export function ImposterAppComponent() {
           </Sheet>
         </header>
 
-        <Card className="w-full border-2 border-primary/20 bg-card/80 shadow-xl shadow-primary/5">
-          <CardContent className="p-6">
-            <div className="space-y-8">
-              <div className="space-y-2">
-                <Label htmlFor="main-username" className="text-lg font-medium text-primary">Your Generated Codename</Label>
-                <div className="flex items-center gap-2">
-                  <div id="main-username" className="flex h-12 w-full items-center rounded-md border border-input bg-background px-3 text-lg font-semibold">
-                    {mainUsername}
-                  </div>
-                </div>
-              </div>
+        {gameScreen === 'lobby' ? renderLobbyScreen() : renderSquadScreen()}
 
-              <div className="space-y-4">
-                <h3 className="flex items-center gap-2 text-lg font-medium text-primary">
-                  <UserPlus className="h-5 w-5" />
-                  Assemble Your Squad (add up to 3)
-                </h3>
-                <div className="grid grid-cols-1 gap-4">
-                  {squadUsernames.map((username, index) => (
-                    <div key={index} className="space-y-2">
-                       <Label htmlFor={`squad-mate-${index + 1}`}>Squad Mate {squadLabels[index]}</Label>
-                      <Input
-                        id={`squad-mate-${index + 1}`}
-                        type="text"
-                        placeholder="Enter teammate's codename..."
-                        value={username}
-                        onChange={(e) => handleSquadChange(index, e.target.value)}
-                        className="h-12 text-base"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Separator className="my-6 bg-border" />
-              
-              <div className="flex justify-center">
-                <Button 
-                  onClick={handleFindImposter} 
-                  disabled={isButtonDisabled}
-                  size="lg"
-                  className="w-full max-w-md py-8 text-xl font-bold uppercase tracking-widest transition-all duration-300 ease-in-out hover:scale-105 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:hover:scale-100"
-                >
-                  Find the Imposter
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
       
       <div className="fixed bottom-0 left-0 w-full flex justify-center items-center p-4">
