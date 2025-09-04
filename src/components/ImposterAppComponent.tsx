@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mail, Menu, Skull, User, UserPlus, Copy, Users, LogIn } from "lucide-react";
+import { Mail, Menu, Skull, User, Copy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,12 +21,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { Label } from "@/components/ui/label";
 import { AdBanner } from "./AdBanner";
 import { db } from "@/lib/firebase";
 import { doc, setDoc, onSnapshot, updateDoc, arrayUnion } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-
+import { LobbyScreen } from "./LobbyScreen";
+import { SquadScreen } from "./SquadScreen";
 
 const adjectives = [
   'Crimson', 'Azure', 'Golden', 'Shadow', 'Steel', 'Void', 'Iron', 'Star', 'Death', 'Omega', 'Nova', 'Cyber', 'Bio', 'Mech', 'Liberty', 'Freedom'
@@ -176,116 +174,6 @@ export function ImposterAppComponent() {
 
   const isLocalUserImposter = imposter === mainUsername;
 
-  const renderLobbyScreen = () => (
-    <Card className="w-full border-2 border-primary/20 bg-card/80 shadow-xl shadow-primary/5">
-        <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl text-primary">
-                <UserPlus className="h-6 w-6" />
-                Prepare for Deployment
-            </CardTitle>
-        </CardHeader>
-      <CardContent className="p-6 pt-0 space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="main-username" className="text-lg font-medium">Your Generated Codename</Label>
-          <div className="flex items-center gap-2">
-            <Input 
-                id="main-username"
-                className="h-12 text-lg font-semibold bg-background"
-                value={mainUsername}
-                onChange={(e) => setMainUsername(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <Separator />
-
-        <div className="space-y-4">
-             <h3 className="flex items-center gap-2 text-lg font-medium">
-                <Users className="h-5 w-5" />
-                Create a New Squad
-            </h3>
-            <Button onClick={handleCreateSquad} disabled={!mainUsername} className="w-full h-12 text-lg">
-                Create Squad
-            </Button>
-        </div>
-
-        <div className="flex items-center gap-4">
-            <Separator className="flex-1" />
-            <span className="text-muted-foreground">OR</span>
-            <Separator className="flex-1" />
-        </div>
-
-        <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-medium">
-                <LogIn className="h-5 w-5" />
-                Join an Existing Squad
-            </h3>
-            <div className="flex gap-2">
-                <Input
-                    type="text"
-                    placeholder="Enter Squad ID..."
-                    value={squadIdInput}
-                    onChange={(e) => setSquadIdInput(e.target.value.toUpperCase())}
-                    className="h-12 text-base"
-                />
-                <Button onClick={handleJoinSquad} disabled={!mainUsername || !squadIdInput} className="h-12">
-                    Join
-                </Button>
-            </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  const renderSquadScreen = () => (
-    <Card className="w-full border-2 border-primary/20 bg-card/80 shadow-xl shadow-primary/5">
-        <CardHeader>
-             <CardTitle className="flex items-center justify-between text-xl text-primary">
-                <span>Squad Ready</span>
-                <div className="flex items-center gap-2">
-                    <span className="text-base font-mono p-2 rounded-md bg-muted text-muted-foreground">{squadId}</span>
-                    <Button variant="ghost" size="icon" onClick={() => navigator.clipboard.writeText(squadId)}>
-                        <Copy className="h-5 w-5"/>
-                    </Button>
-                </div>
-            </CardTitle>
-        </CardHeader>
-      <CardContent className="p-6 pt-0">
-        <div className="space-y-8">
-            <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-medium text-primary">
-                <Users className="h-5 w-5" />
-                Your Squad ({squadUsernames.length}/4)
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {squadUsernames.map((username, index) => (
-                <div key={index} className="flex h-12 w-full items-center rounded-md border border-input bg-background px-3 text-lg font-semibold">
-                    {username} {username === mainUsername && "(You)"}
-                </div>
-              ))}
-              {Array.from({ length: 4 - squadUsernames.length }).map((_, index) => (
-                <div key={`placeholder-${index}`} className="flex h-12 w-full items-center rounded-md border border-dashed border-input/50 bg-background/50 px-3 text-lg font-semibold text-muted-foreground/50">
-                    Awaiting Drop...
-                </div>
-              ))}
-            </div>
-          </div>
-          <Separator className="my-6 bg-border" />
-          <div className="flex justify-center">
-            <Button 
-              onClick={handleFindImposter} 
-              disabled={squadUsernames.length < 2}
-              size="lg"
-              className="w-full max-w-md py-8 text-xl font-bold uppercase tracking-widest transition-all duration-300 ease-in-out hover:scale-105 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:hover:scale-100"
-            >
-              Find the Imposter
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   return (
     <>
       <div className="container mx-auto flex max-w-4xl flex-col p-4 sm:p-6 md:p-8">
@@ -335,7 +223,23 @@ export function ImposterAppComponent() {
           </Sheet>
         </header>
 
-        {gameScreen === 'lobby' ? renderLobbyScreen() : renderSquadScreen()}
+        {gameScreen === 'lobby' ? (
+          <LobbyScreen 
+            mainUsername={mainUsername}
+            setMainUsername={setMainUsername}
+            squadIdInput={squadIdInput}
+            setSquadIdInput={setSquadIdInput}
+            handleCreateSquad={handleCreateSquad}
+            handleJoinSquad={handleJoinSquad}
+          />
+        ) : (
+          <SquadScreen 
+            squadId={squadId}
+            squadUsernames={squadUsernames}
+            mainUsername={mainUsername}
+            handleFindImposter={handleFindImposter}
+          />
+        )}
 
       </div>
       
