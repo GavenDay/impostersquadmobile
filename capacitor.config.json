@@ -1,0 +1,6 @@
+{
+  "appId": "com.impostersquad.app",
+  "appName": "Imposter Squad",
+  "webDir": "out",
+  "bundledWebRuntime": false
+}
