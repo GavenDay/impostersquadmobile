@@ -362,7 +362,7 @@ export function ImposterAppComponent() {
                 Warning!
               </AlertDialogTitle>
               <AlertDialogDescription className="pt-4 text-center text-lg">
-                There is an imposter amongst your ranks. Eliminate them at all costs. The imposter is: {imposter}
+                There is an imposter amongst your ranks. Eliminate them at all costs.
               </AlertDialogDescription>
             </AlertDialogHeader>
           )}

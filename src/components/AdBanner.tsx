@@ -11,7 +11,7 @@ declare global {
 }
 
 export function AdBanner() {
-  const adClient = "ca-pub-5973346929930120"; // <-- REPLACE WITH YOUR CLIENT ID
+  const adClient = "ca-pub-5973346929930120";
   const adSlot = "YYYYYYYYYY"; // <-- REPLACE WITH YOUR AD SLOT ID
 
   useEffect(() => {
@@ -33,23 +33,15 @@ export function AdBanner() {
   }
 
   return (
-    <>
-      <Script
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`}
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
-      <div className="w-[728px] h-[90px]">
-        <ins
-          className="adsbygoogle"
-          style={{ display: "block" }}
-          data-ad-client={adClient}
-          data-ad-slot={adSlot}
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        ></ins>
-      </div>
-    </>
+    <div className="w-[728px] h-[90px]">
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block" }}
+        data-ad-client={adClient}
+        data-ad-slot={adSlot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      ></ins>
+    </div>
   );
 }
