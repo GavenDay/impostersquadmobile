@@ -27,6 +27,7 @@ import { doc, setDoc, onSnapshot, updateDoc, arrayUnion } from "firebase/firesto
 import { useToast } from "@/hooks/use-toast";
 import { LobbyScreen } from "./LobbyScreen";
 import { SquadScreen } from "./SquadScreen";
+import { ScrollArea } from "./ui/scroll-area";
 
 const adjectives = [
   'Crimson', 'Azure', 'Golden', 'Shadow', 'Steel', 'Void', 'Iron', 'Star', 'Death', 'Omega', 'Nova', 'Cyber', 'Bio', 'Mech', 'Liberty', 'Freedom'
@@ -196,8 +197,9 @@ export function ImposterAppComponent() {
             <SheetContent>
               <SheetHeader>
                 <SheetTitle className="text-primary">Rules of Engagement</SheetTitle>
+              </SheetHeader>
+              <ScrollArea className="h-full pr-6">
                 <SheetDescription asChild>
-                  <div className="flex h-full flex-col">
                     <div className="space-y-4 pt-4 text-left text-base text-muted-foreground">
                       <div>1. One player creates a squad and shares the Squad ID.</div>
                       <div>2. Other players join using the Squad ID.</div>
@@ -206,19 +208,18 @@ export function ImposterAppComponent() {
                       <div>5. If no one exfils or just the imposter does, then the imposter wins.</div>
                       <div>6. If the imposter doesnt exfil, then everyone else wins.</div>
                     </div>
-                    <Separator className="my-4" />
-                    <div className="text-sm text-muted-foreground">
-                      The creation of your own rules of engagement is not only sanctioned but encouraged. While on the field of battle rules change. Make sure to share these rules with the rest of the community. It might save someone while in the field.
-                    </div>
-                    <div className="mt-auto pt-6">
-                      <Button variant="outline" className="w-full" onClick={() => setIsContactUsOpen(true)}>
-                        <Mail className="mr-2 h-4 w-4" />
-                        Contact Us
-                      </Button>
-                    </div>
-                  </div>
                 </SheetDescription>
-              </SheetHeader>
+                <Separator className="my-4" />
+                <div className="text-sm text-muted-foreground">
+                  The creation of your own rules of engagement is not only sanctioned but encouraged. While on the field of battle rules change. Make sure to share these rules with the rest of the community. It might save someone while in the field.
+                </div>
+                <div className="pt-6">
+                  <Button variant="outline" className="w-full" onClick={() => setIsContactUsOpen(true)}>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Contact Us
+                  </Button>
+                </div>
+              </ScrollArea>
             </SheetContent>
           </Sheet>
         </header>
