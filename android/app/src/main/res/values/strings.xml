@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Imposter Squad</string>
+    <string name="title_activity_main">Imposter Squad</string>
+    <string name="package_name">com.impostersquad.app</string>
+    <string name="custom_url_scheme">com.impostersquad.app</string>
+</resources>
