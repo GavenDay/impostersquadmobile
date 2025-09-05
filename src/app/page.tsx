@@ -11,7 +11,7 @@ const ImposterAppComponent = dynamic(
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background text-foreground pb-28">
+    <main className="min-h-screen bg-background text-foreground pb-40">
       <ImposterAppComponent />
     </main>
   );
