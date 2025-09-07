@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { ArrowLeft, Gamepad2, ScrollText, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Gamepad2, ScrollText, ShieldCheck, Trash2 } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -25,6 +25,16 @@ export default function AboutPage() {
 
             <div className="space-y-4">
               <h2 className="text-xl font-semibold text-foreground">Update Log</h2>
+
+              <div className="flex items-start gap-4">
+                <div className="pt-1">
+                  <Trash2 className="h-6 w-6 text-primary/80" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground">Lobby Lifecycle Management</h3>
+                  <p>Implemented automatic lobby cleanup. When a player leaves a squad, they are removed from the list. If the last player leaves, the entire squad lobby is automatically deleted to keep things tidy.</p>
+                </div>
+              </div>
               
               <div className="flex items-start gap-4">
                 <div className="pt-1">

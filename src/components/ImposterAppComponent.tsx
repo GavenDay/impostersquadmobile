@@ -24,7 +24,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { AdBanner } from "./AdBanner";
 import { db } from "@/lib/firebase";
-import { doc, setDoc, onSnapshot, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, setDoc, onSnapshot, updateDoc, getDoc, arrayRemove, deleteDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { LobbyScreen } from "./LobbyScreen";
 import { SquadScreen } from "./SquadScreen";
@@ -58,10 +58,16 @@ export function ImposterAppComponent() {
       const number = Math.floor(Math.random() * 900) + 100;
       return `${adj}${noun}-${number}`;
     };
-    setMainUsername(generateUsername());
+    if (typeof window !== 'undefined' && !sessionStorage.getItem('mainUsername')) {
+      const newUsername = generateUsername();
+      setMainUsername(newUsername);
+      sessionStorage.setItem('mainUsername', newUsername);
+    } else if (typeof window !== 'undefined') {
+      setMainUsername(sessionStorage.getItem('mainUsername') || '');
+    }
   }, []);
 
-  // Firestore real-time listener
+  // Firestore real-time listener for squad updates
   useEffect(() => {
     if (!squadId) return;
 
@@ -77,16 +83,40 @@ export function ImposterAppComponent() {
       } else {
         toast({
             variant: "destructive",
-            title: "Error joining squad",
-            description: "Squad ID not found. Please check the ID and try again.",
+            title: "Squad Disbanded",
+            description: "The squad you were in no longer exists.",
         });
         handleResetToLobby();
       }
     });
 
-    // Cleanup subscription on component unmount
     return () => unsubscribe();
   }, [squadId, toast]);
+
+  // Player removal and lobby cleanup logic
+  useEffect(() => {
+    return () => {
+      if (gameScreen === 'squad' && squadId && mainUsername) {
+        const squadRef = doc(db, 'squads', squadId);
+        
+        getDoc(squadRef).then(docSnap => {
+          if (docSnap.exists()) {
+            const players = docSnap.data().players || [];
+            
+            if (players.length <= 1) {
+              // If this is the last player, delete the squad doc
+              deleteDoc(squadRef);
+            } else {
+              // Otherwise, just remove this player
+              updateDoc(squadRef, {
+                players: arrayRemove(mainUsername)
+              });
+            }
+          }
+        });
+      }
+    };
+  }, [gameScreen, squadId, mainUsername]);
 
   const handleCreateSquad = async () => {
     if (mainUsername.trim() === "") {
@@ -128,6 +158,12 @@ export function ImposterAppComponent() {
     
     try {
         const squadRef = doc(db, "squads", squadIdToJoin);
+        // Use a transaction to check if squad exists before joining
+        const squadDoc = await getDoc(squadRef);
+        if (!squadDoc.exists()) {
+          throw new Error("Squad not found");
+        }
+
         await updateDoc(squadRef, {
             players: arrayUnion(mainUsername)
         });
