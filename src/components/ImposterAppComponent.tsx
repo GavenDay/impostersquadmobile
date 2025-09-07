@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mail, Menu, Skull, User, Copy, Users } from "lucide-react";
+import Link from "next/link";
+import { Mail, Menu, Skull, User, Users, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -213,10 +214,16 @@ export function ImposterAppComponent() {
                 <div className="text-sm text-muted-foreground">
                   The creation of your own rules of engagement is not only sanctioned but encouraged. While on the field of battle rules change. Make sure to share these rules with the rest of the community. It might save someone while in the field.
                 </div>
-                <div className="pt-6">
+                <div className="pt-6 space-y-2">
                   <Button variant="outline" className="w-full" onClick={() => setIsContactUsOpen(true)}>
                     <Mail className="mr-2 h-4 w-4" />
                     Contact Us
+                  </Button>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/terms">
+                      <FileText className="mr-2 h-4 w-4" />
+                      Terms of Service
+                    </Link>
                   </Button>
                 </div>
               </ScrollArea>
