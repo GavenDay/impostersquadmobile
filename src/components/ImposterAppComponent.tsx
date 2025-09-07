@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Mail, Menu, Skull, User, Users, FileText } from "lucide-react";
+import { Mail, Menu, Skull, User, Users, FileText, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -223,6 +223,12 @@ export function ImposterAppComponent() {
                     <Link href="/terms">
                       <FileText className="mr-2 h-4 w-4" />
                       Terms of Service
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/privacy">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Privacy Policy
                     </Link>
                   </Button>
                 </div>
